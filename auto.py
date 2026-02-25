@@ -1,6 +1,12 @@
 from chatterbot import ChatBot
 from chatterbot.trainers import ChatterBotCorpusTrainer
-from flask import Flask
+from flask import Flask, render_template
+
+
+
+
+app = Flask(__name__)
+
 
 #read_only False = bot can learn from the conversation
 #chatterbot.logic.BestMatch = compare message to sentences he knows -> get the closest answer
@@ -16,12 +22,21 @@ bot = ChatBot("chatbot", read_only=True,
 
 trainer = ChatterBotCorpusTrainer(bot)
 #Train on conversation in english (dataset)
-trainer.train("chatterbot.corpus.english")
+#trainer.train("chatterbot.corpus.english")
 
 
+@app.route("/")
+def main():
+    return render_template("index.html")
+
+'''
 #Ask user to type something and paste it to our bot
 while True:
     user_response = input("User : ")
     res = bot.get_response(user_response)
     print("Chatbot : " +str(res))
+'''
+
+if __name__ == '__main__':
+    app.run(debug=True)
     

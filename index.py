@@ -8,7 +8,7 @@ listAdapter = {
     "default_response":"Sorry I dont have any answer",
 }
 
-bot = ChatBot("chatbot", read_only=False, 
+bot = ChatBot("chatbot", read_only=True, 
               logic_adapter=[listAdapter])
 
 #Question and Answer
@@ -42,7 +42,6 @@ while True:
     if(res.confidence > 0.9):
         print("Chatbot : " +str(res))
     else:
-
         print("Chatbot : " + str(listAdapter["default_response"]))
     
     print("Confidence : ", res.confidence)

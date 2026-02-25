@@ -1,0 +1,42 @@
+body{
+    font-style: monospace;   
+}
+
+#chatbox{
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+    margin-top: 50px;
+}
+
+.botText{
+    font-family: monospace;
+    font-size: 16px;
+    text-align: left;
+    line-height: 25px;
+    color: blue;
+}
+
+#userInput{
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+    margin-top: 50px;
+}
+
+#textInput{
+    border-bottom: 3px solid #657899;
+    font-family: monospace;
+    font-size: 16px;
+}
+
+#buttonInput{
+    padding: 5px;
+    font-family: monospace;
+    font-size: 16px;
+}
+
+h1{
+    text-align: center;
+
+}

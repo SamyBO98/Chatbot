@@ -44,7 +44,6 @@ bot = ChatBot(
 print("--------------Math ChatBot----------------")
 
 while True:
-    
     user_response = input("Type Math equation : ")
     converted_input = french_words_to_numbers(user_response.lower())
     print(converted_input)

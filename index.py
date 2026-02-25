@@ -7,8 +7,8 @@ bot = ChatBot("chatbot", read_only=False, logic_adapter=["chatterbot.logic.BestM
 
 #Question and Answer
 list_to_train = [
-    "hi",
-    "hi there",
+    "Hi",
+    "Hi there",
     "What's your name?",
     "I am a chatbot",
     "How old are you ?",
@@ -20,6 +20,7 @@ list_trainer = ListTrainer(bot)
 list_trainer.train(list_to_train)
 
 #Ask user to type something and paste it to our bot
-user_response = input("User : ")
-res = bot.get_response(user_response)
-print(res)
+while True:
+    user_response = input("User : ")
+    res = bot.get_response(user_response)
+    print("Chatbot : " +str(res))

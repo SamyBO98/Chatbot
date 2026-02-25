@@ -26,6 +26,26 @@ qa_pairs = {
     clean("how old are you?"): ["I am very old", "I was created recently"],
 }
 
+
+intents = [
+    {
+        "tag": "greeting",
+        "keywords": ["hi", "hello", "hey", "yo"],
+        "responses": ["Hi there!", "Hello!", "Hey"]
+    },
+    {
+        "tag": "name",
+        "keywords": ["name", "who"],
+        "responses": ["I am a chatbot", "You can call me Chatbot"]
+    },
+
+    {
+        "tag": "age",
+        "keywords": ["old", "age"],
+        "responses": ["I am very old", "I was created recently"]
+    }
+]
+
 #get best questions
 #user: "Hi bot"
 # {hi, bot}
@@ -52,33 +72,26 @@ for question, responses in qa_pairs.items():
         trainer.train([question, response])
 
 # Ask user Input
-CONFIDENCE_THRESHOLD = 0.5 
+CONFIDENCE_THRESHOLD = 0.2
 while True:
     user_input = input("User: ")
     cleaned_input = clean(user_input)
-
-    best_key = None
-    best_score = 0
-
     input_words = set(cleaned_input.split())
 
-    for question in qa_pairs.keys():
-        question_words = set(clean(question).split())
+    best_intent = None
+    best_score = 0
 
-        common_words = len(input_words & question_words)
-
-        if len(question_words) > 0:
-            score = common_words / len(input_words)
-        else:
-            score = 0
-
+    for intent in intents:
+        intent_keywords = set(intent["keywords"])
+        common_words = len(input_words & intent_keywords)
+        score = common_words / max(len(input_words), 1)
         if score > best_score:
             best_score = score
-            best_key = question
+            best_intent = intent
 
-    if best_score >= CONFIDENCE_THRESHOLD:
-        print("Chatbot:", random.choice(qa_pairs[best_key]))
+    if best_score >= CONFIDENCE_THRESHOLD and best_intent is not None:
+        print("Chatbot:", random.choice(best_intent["responses"]))
     else:
-        print("Chatbot: Sorry I dont have any answer")
+        print("Chatbot: Sorry I don't have an answer")
 
     print("Confidence:", round(best_score, 2))

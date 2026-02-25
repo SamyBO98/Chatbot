@@ -14,7 +14,6 @@ def clean(text):
 listAdapter = {
     "import_path":"chatterbot.logic.BestMatch",
     "default_response":"Sorry, I don't have an answer",
-    "maximum_similarity_threshold":0.90
 }
 
 bot = ChatBot("chatbot", read_only=True, logic_adapters=[listAdapter])
@@ -22,6 +21,7 @@ bot = ChatBot("chatbot", read_only=True, logic_adapters=[listAdapter])
 # Dict questions -> answers
 qa_pairs = {
     clean("hi"): ["Hi there", "Hello", "Hey!"],
+    clean("hello"): ["Hi there", "Hello", "Hey!"],
     clean("what's your name?"): ["I am a chatbot", "You can call me Chatbot"],
     clean("how old are you?"): ["I am very old", "I was created recently"],
 }
@@ -57,33 +57,28 @@ while True:
     user_input = input("User: ")
     cleaned_input = clean(user_input)
 
-    res = bot.get_response(user_input)
+    best_key = None
+    best_score = 0
 
-    if res.confidence >= CONFIDENCE_THRESHOLD:
+    input_words = set(cleaned_input.split())
 
-        closest_key = None
-        max_similarity = 0
-        #Compare with questions (first val of qa_pairs)
-        for question in qa_pairs.keys():
-            cleaned_question = clean(question)
+    for question in qa_pairs.keys():
+        question_words = set(clean(question).split())
 
-            #word in common
-            input_words = set(cleaned_input.split())
-            question_words = set(cleaned_question.split())
+        common_words = len(input_words & question_words)
 
-            similarity = len(input_words & question_words)
-
-            if similarity > max_similarity:
-                max_similarity = similarity
-                closest_key = question
-
-        #at least one word in common
-        if closest_key and max_similarity > 0:
-            print("Chatbot:", random.choice(qa_pairs[closest_key]))
+        if len(question_words) > 0:
+            score = common_words / len(input_words)
         else:
-            print("Chatbot:", listAdapter["default_response"])
+            score = 0
 
+        if score > best_score:
+            best_score = score
+            best_key = question
+
+    if best_score >= CONFIDENCE_THRESHOLD:
+        print("Chatbot:", random.choice(qa_pairs[best_key]))
     else:
-        print("Chatbot:", listAdapter["default_response"])
+        print("Chatbot: Sorry I dont have any answer")
 
-    print("Confidence:", res.confidence)
+    print("Confidence:", round(best_score, 2))

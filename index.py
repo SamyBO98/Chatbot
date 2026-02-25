@@ -18,3 +18,8 @@ list_to_train = [
 
 list_trainer = ListTrainer(bot)
 list_trainer.train(list_to_train)
+
+#Ask user to type something and paste it to our bot
+user_response = input("User : ")
+res = bot.get_response(user_response)
+print(res)

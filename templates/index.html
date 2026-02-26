@@ -9,10 +9,11 @@
 
 </head>
 <body>
-    <h1>Chatbot App</h1>
+    <h1>Weather Chatbot App</h1>
     <div>
         <div id="chatbox">
             <p class="botText"><span>Hi there!</span></p>
+            <p class="botText"><span>Which city you want to know the weather ?</span></p>
         </div>
         <div id="userInput">
             <input id="textInput" type="text" name="userMessage" placeholder="Type your message"/>
@@ -21,23 +22,41 @@
     </div> 
 
     <script>
-        function getUserResponse(){
-            //Get msg user write on the app
-            let userText = $('#textInput').val();
-            //Create a place to show the message
-            let userHTML = "<p class='userText'>User: <span>"+userText+"</span></p> ";
-            //Clean textInput
-            $('#textInput').val("");
-            //Add message to chatbox div
-            $('#chatbox').append(userHTML);
-            //Auto scroll
-            document.getElementById("userInput").scrollIntoView({block:'start',behavior:'smooth'});
-            //Get userText + append answer
-            $.get("/get",{userMessage: userText}).done(function(data){
-                let botHTML = "<p class='botText'>Chatbot: <span>"+data+"</span></p>";
+    function getUserResponse(){
+        let userText = $('#textInput').val();
+        let userHTML = "<p class='userText'>User: <span>"+userText+"</span></p>";
+        $('#textInput').val("");
+        $('#chatbox').append(userHTML);
+
+        // Auto scroll
+        document.getElementById("userInput").scrollIntoView({block:'start',behavior:'smooth'});
+
+        // GET request
+        $.get("/get", {userMessage: userText})
+            .done(function(data){
+                // If error
+                if(data.error){
+                    let botHTML = "<p class='botText'>Chatbot: <span> "+data.error+"</span></p>";
+                    $('#chatbox').append(botHTML);
+                } else {
+                    // Réponse valide météo
+                    let botHTML = "<p class='botText'>Chatbot: <span>Température: " + data.main.temp + "°C - " + data.weather[0].description + "</span></p>";
+                    $('#chatbox').append(botHTML);
+                }
+
+                // Auto scroll
+                document.getElementById("chatbox").scrollIntoView({block:'end', behavior:'smooth'});
+            })
+            .fail(function(xhr){
+                // En cas d'erreur réseau ou HTTP 400/404/500
+                let errorMsg = "Error fetching data";
+                try {
+                    let data = JSON.parse(xhr.responseText);
+                    if(data.error) errorMsg = " " + data.error;
+                } catch(e){}
+                let botHTML = "<p class='botText'>Chatbot: <span>"+errorMsg+"</span></p>";
                 $('#chatbox').append(botHTML);
             });
-
         }
 
         $("#textInput").keypress(function(e){

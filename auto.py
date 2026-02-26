@@ -1,6 +1,9 @@
 from chatterbot import ChatBot
 from chatterbot.trainers import ChatterBotCorpusTrainer
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,jsonify
+from dotenv import load_dotenv
+import requests
+import os
 
 
 
@@ -20,9 +23,14 @@ bot = ChatBot("chatbot", read_only=True,
 
 
 
-trainer = ChatterBotCorpusTrainer(bot)
+#trainer = ChatterBotCorpusTrainer(bot)
 #Train on conversation in english (dataset)
-trainer.train("chatterbot.corpus.english")
+#Uncomment to train once to create DB then comment
+#trainer.train("chatterbot.corpus.english")
+
+
+load_dotenv()
+OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
 
 @app.route("/")
@@ -40,8 +48,37 @@ while True:
 @app.route("/get")
 def get_chatbot_response():
     userText = request.args.get('userMessage')
-    return str(bot.get_response(userText))
+    #If we type nothing return error
+    if not userText or userText.strip() == "":
+        return jsonify({"error": "Please type something"}), 400
+    try:
+        response = requests.get(
+            "https://api.openweathermap.org/data/2.5/weather",
+            params={
+                "q": userText,
+                "units": "metric",
+                "appid": OPENWEATHER_API_KEY
+            }
+        )
+
+        data = response.json()
+        #print(data)
+        #print(data.get("cod"))
+
+        #If city not found return error
+        if response.status_code == 404 or str(data.get("cod")) == "404":
+            return jsonify({"error": "City not found"}), 404
+        #response = bot.get_response(userText)
+        #if not response or str(response).strip() == "":
+        #    return "I’m not sure how to answer that"
+        #return str(response)
+        return jsonify(data)
+
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Server error"}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # trainer.train("chatterbot.corpus.english")
+    app.run(debug=True, threaded=True)
     

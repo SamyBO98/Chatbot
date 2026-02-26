@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ChatBot</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-4.0.0.js" integrity="sha256-9fsHeVnKBvqh3FB2HYu7g2xseAZ5MlN6Kz/qnkASV8U=" crossorigin="anonymous"></script>
 
 </head>
 <body>
@@ -17,6 +18,38 @@
             <input id="textInput" type="text" name="userMessage" placeholder="Type your message"/>
             <input id="buttonInput" type="submit" value="Send"/>
         </div>
-    </div>
+    </div> 
+
+    <script>
+        function getUserResponse(){
+            //Get msg user write on the app
+            let userText = $('#textInput').val();
+            //Create a place to show the message
+            let userHTML = "<p class='userText'>User: <span>"+userText+"</span></p> ";
+            //Clean textInput
+            $('#textInput').val("");
+            //Add message to chatbox div
+            $('#chatbox').append(userHTML);
+            //Auto scroll
+            document.getElementById("userInput").scrollIntoView({block:'start',behavior:'smooth'});
+            //Get userText + append answer
+            $.get("/get",{userMessage: userText}).done(function(data){
+                let botHTML = "<p class='botText'>Chatbot: <span>"+data+"</span></p>";
+                $('#chatbox').append(botHTML);
+            });
+
+        }
+
+        $("#textInput").keypress(function(e){
+            if(e.which == 13){
+                getUserResponse();
+
+            }
+        });
+
+        $('#buttonInput').click(function(){
+            getUserResponse();
+        })
+    </script>
 </body>
 </html>

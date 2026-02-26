@@ -13,7 +13,7 @@
     <div>
         <div id="chatbox">
             <p class="botText"><span>Hi there!</span></p>
-            <p class="botText"><span>Which city you want to know the weather ?</span></p>
+            <p class="botText"><span>Which city do you want to know the weather for ?</span></p>
         </div>
         <div id="userInput">
             <input id="textInput" type="text" name="userMessage" placeholder="Type your message"/>
@@ -40,7 +40,7 @@
                     $('#chatbox').append(botHTML);
                 } else {
                     // Réponse valide météo
-                    let botHTML = "<p class='botText'>Chatbot: <span>Température: " + data.main.temp + "°C - " + data.weather[0].description + "</span></p>";
+                    let botHTML = "<p class='botText'>Chatbot: <span>Temperature: " + data.main.temp + "°C - " + data.weather[0].description + "</span></p>";
                     $('#chatbox').append(botHTML);
                 }
 

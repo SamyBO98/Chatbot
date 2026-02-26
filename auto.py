@@ -4,6 +4,7 @@ from flask import Flask, render_template, request,jsonify
 from dotenv import load_dotenv
 import requests
 import os
+import spacy
 
 
 
@@ -31,19 +32,15 @@ bot = ChatBot("chatbot", read_only=True,
 
 load_dotenv()
 OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
+nlp = spacy.load('en_core_web_lg')
+
+
 
 
 @app.route("/")
 def main():
     return render_template("index.html")
 
-'''
-#Ask user to type something and paste it to our bot
-while True:
-    user_response = input("User : ")
-    res = bot.get_response(user_response)
-    print("Chatbot : " +str(res))
-'''
 
 @app.route("/get")
 def get_chatbot_response():
@@ -52,10 +49,16 @@ def get_chatbot_response():
     if not userText or userText.strip() == "":
         return jsonify({"error": "Please type something"}), 400
     try:
+        doc = nlp(userText)
+        city = [ent.text for ent in doc.ents if ent.label_ == "GPE"]
+        if not city:
+            # Pas de ville détectée
+            return jsonify({"error": "No city found in your message"}), 400
+        txt = city[0]
         response = requests.get(
             "https://api.openweathermap.org/data/2.5/weather",
             params={
-                "q": userText,
+                "q": txt,
                 "units": "metric",
                 "appid": OPENWEATHER_API_KEY
             }
@@ -82,3 +85,11 @@ if __name__ == '__main__':
     # trainer.train("chatterbot.corpus.english")
     app.run(debug=True, threaded=True)
     
+
+'''
+#Ask user to type something and paste it to our bot
+while True:
+    user_response = input("User : ")
+    res = bot.get_response(user_response)
+    print("Chatbot : " +str(res))
+'''

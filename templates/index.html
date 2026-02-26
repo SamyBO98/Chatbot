@@ -39,7 +39,7 @@
                     let botHTML = "<p class='botText'>Chatbot: <span> "+data.error+"</span></p>";
                     $('#chatbox').append(botHTML);
                 } else {
-                    // Réponse valide météo
+                    // All good
                     let botHTML = "<p class='botText'>Chatbot: <span>Temperature: " + data.main.temp + "°C - " + data.weather[0].description + "</span></p>";
                     $('#chatbox').append(botHTML);
                 }
@@ -48,7 +48,7 @@
                 document.getElementById("chatbox").scrollIntoView({block:'end', behavior:'smooth'});
             })
             .fail(function(xhr){
-                // En cas d'erreur réseau ou HTTP 400/404/500
+                // Network error or HTTP 400/404/500
                 let errorMsg = "Error fetching data";
                 try {
                     let data = JSON.parse(xhr.responseText);

@@ -7,8 +7,6 @@ import os
 import spacy
 
 
-
-
 app = Flask(__name__)
 
 
@@ -52,7 +50,7 @@ def get_chatbot_response():
         doc = nlp(userText)
         city = [ent.text for ent in doc.ents if ent.label_ == "GPE"]
         if not city:
-            # Pas de ville détectée
+            # No city detected
             return jsonify({"error": "No city found in your message"}), 400
         txt = city[0]
         response = requests.get(

@@ -43,9 +43,16 @@ pip install -r requirements.txt
 ```
 
 4. Add your OpenWeather API key in a .env file:
+```bash
 OPENWEATHER_API_KEY=your_api_key
+```
 
 ## Usage
 ```bash
 python app.py
 ```
+5. Then open your browser at http://127.0.0.1:5000/
+
+6. Type messages and get responses from the chatbot.
+
+
